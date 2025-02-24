@@ -7,11 +7,11 @@ permissions:
 
 on:
   push:
-    branches: ["actions"]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
-  build:
+  test_and_build:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +27,11 @@ jobs:
         working-directory: course-selector
         run: npm install
 
-      - name: Build and Export
+      - name: Test
+        working-directory: course-selector
+        run: echo Hello World
+
+      - name: Build
         working-directory: course-selector
         run: |
           npm run build
@@ -37,7 +41,10 @@ jobs:
         with:
           path: course-selector/dist
 
+
   deploy:
+    runs-on: ubuntu-latest
+    needs: test
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
